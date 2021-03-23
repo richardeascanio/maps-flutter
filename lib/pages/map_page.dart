@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:maps_app/bloc/my_location/my_location_bloc.dart';
 
@@ -34,8 +37,20 @@ class _MapPageState extends State<MapPage> {
   }
 
   Widget createMap(MyLocationState state) {
+
     if (!state.locationExists) return Center(child: Text('Locating...'));
 
-    return Text('${state.location.latitude}, ${state.location.longitude}');
+    CameraPosition _cameraPosition = CameraPosition(
+      target: state.location,
+      zoom: 14.4746
+    );
+
+    return GoogleMap(
+      mapType: MapType.normal,
+      initialCameraPosition: _cameraPosition,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+    );
+
   }
 }
