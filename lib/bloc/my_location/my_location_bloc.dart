@@ -11,17 +11,14 @@ part 'my_location_state.dart';
 class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState> {
   MyLocationBloc() : super(MyLocationState());
 
-  final _geolocator = new Geolocator();
   StreamSubscription<Position> _positionSubscription;
 
   void initLocationListener() {
 
-    final locationOptions = LocationOptions(
-      accuracy: LocationAccuracy.high,
+    _positionSubscription = Geolocator.getPositionStream(
+      desiredAccuracy: LocationAccuracy.high,
       distanceFilter: 10
-    );
-
-    _positionSubscription = this._geolocator.getPositionStream(locationOptions).listen((Position position) {
+    ).listen((Position position) {
       print(position);
       final newLocation = new LatLng(position.latitude, position.longitude);
       add(OnLocationChanged(newLocation));
