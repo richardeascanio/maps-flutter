@@ -36,7 +36,9 @@ class _MapPageState extends State<MapPage> {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          CenterLocationButton()
+          CenterLocationButton(),
+          FollowLocationButton(),
+          RouteButton(),
         ],
       ),
     );
@@ -48,18 +50,23 @@ class _MapPageState extends State<MapPage> {
 
     final mapBloc = BlocProvider.of<MapaBloc>(context);
 
+    mapBloc.add(OnNewLocation(state.location));
+
     CameraPosition _cameraPosition = CameraPosition(
       target: state.location,
       zoom: 14.4746
     );
 
     return GoogleMap(
-      zoomControlsEnabled: false,
       mapType: MapType.normal,
       initialCameraPosition: _cameraPosition,
       myLocationEnabled: true,
       myLocationButtonEnabled: false,
       onMapCreated: mapBloc.initMap,
+      polylines: mapBloc.state.polylines.values.toSet(),
+      onCameraMove: (position) {
+        mapBloc.add(OnMapMoved(position.target));
+      },
     );
 
   }
