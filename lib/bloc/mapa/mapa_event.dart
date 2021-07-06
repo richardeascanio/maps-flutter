@@ -9,6 +9,14 @@ class OnDrawRoute extends MapaEvent {}
 
 class OnFollowLocation extends MapaEvent {}
 
+class OnCreateRouteInitDestination extends MapaEvent {
+  final List<LatLng> coordRoutes;
+  final double distance;
+  final double duration;
+
+  OnCreateRouteInitDestination({this.coordRoutes, this.distance, this.duration});
+}
+
 class OnMapMoved extends MapaEvent {
   final LatLng centralLocation;
 

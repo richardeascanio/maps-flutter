@@ -25,6 +25,12 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
     color: Colors.transparent
   );
 
+  Polyline _myDestRoute = Polyline(
+    polylineId: PolylineId('my_dest_route'),
+    width: 4,
+    color: Colors.black54
+  );
+
   void initMap(GoogleMapController controller) {
     if (!state.mapaListo) {
       this._mapController = controller;
@@ -48,10 +54,11 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
     } else if (event is OnDrawRoute) {
       yield* this._onDrawRoute(event);
     } else if (event is OnFollowLocation) {
-      yield* _onFollowLocation(event);
+      yield* this._onFollowLocation(event);
     } else if (event is OnMapMoved) {
-      print('central location ${event.centralLocation}');
       yield state.copyWith(centralLocation: event.centralLocation);
+    } else if (event is OnCreateRouteInitDestination) {
+      yield* this._onCreateRouteInitDestination(event);
     }
   }
 
@@ -90,5 +97,18 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
       this.moveCamera(this._myRoute.points[this._myRoute.points.length - 1]);
     }
     yield state.copyWith(followLocation: !state.followLocation);
+  }
+
+  Stream<MapaState> _onCreateRouteInitDestination(OnCreateRouteInitDestination event) async* {
+    this._myDestRoute = this._myDestRoute.copyWith(
+      pointsParam: event.coordRoutes,
+    );
+
+    final currentPolylines = state.polylines;
+    currentPolylines['my_dest_route'] = this._myDestRoute;
+
+    yield state.copyWith(
+      polylines: currentPolylines
+    );
   }
 }

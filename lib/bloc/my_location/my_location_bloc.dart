@@ -19,7 +19,6 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState> {
       desiredAccuracy: LocationAccuracy.high,
       distanceFilter: 10
     ).listen((Position position) {
-      print(position);
       final newLocation = new LatLng(position.latitude, position.longitude);
       add(OnLocationChanged(newLocation));
     });

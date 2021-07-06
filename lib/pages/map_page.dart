@@ -7,7 +7,6 @@ import 'package:maps_app/bloc/mapa/mapa_bloc.dart';
 import 'package:maps_app/widgets/widgets.dart';
 
 class MapPage extends StatefulWidget {
-
   @override
   _MapPageState createState() => _MapPageState();
 }
@@ -21,17 +20,27 @@ class _MapPageState extends State<MapPage> {
   }
 
   @override
-    void dispose() {
-      context.read<MyLocationBloc>().cancelLocationListener();
-      super.dispose();
-    }
-
+  void dispose() {
+    context.read<MyLocationBloc>().cancelLocationListener();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<MyLocationBloc, MyLocationState>(
-        builder: (_, state) => createMap(state),
+      body: Stack(
+        children: [
+          BlocBuilder<MyLocationBloc, MyLocationState>(
+            builder: (_, state) => createMap(state),
+          ),
+
+          Positioned(
+            top: 10.0,
+            child: SearchBar()
+          ),
+          
+          ManualMarker()
+        ],
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -57,17 +66,23 @@ class _MapPageState extends State<MapPage> {
       zoom: 14.4746
     );
 
-    return GoogleMap(
-      mapType: MapType.normal,
-      initialCameraPosition: _cameraPosition,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      onMapCreated: mapBloc.initMap,
-      polylines: mapBloc.state.polylines.values.toSet(),
-      onCameraMove: (position) {
-        mapBloc.add(OnMapMoved(position.target));
+    return BlocBuilder<MapaBloc, MapaState>(
+      builder: (context, _) {
+        return GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: _cameraPosition,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          onMapCreated: mapBloc.initMap,
+          polylines: mapBloc.state.polylines.values.toSet(),
+          onCameraMove: (position) {
+            mapBloc.add(OnMapMoved(position.target));
+          },
+        );
       },
     );
+
+    
 
   }
 }
