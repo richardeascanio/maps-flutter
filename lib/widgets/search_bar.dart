@@ -29,9 +29,10 @@ class _BuildSearchBar extends StatelessWidget {
         width: size.width,
         child: GestureDetector(
           onTap: () async {
+            final proximity = BlocProvider.of<MyLocationBloc>(context).state.location;
             final result = await showSearch(
               context: context, 
-              delegate: SearchDestination()
+              delegate: SearchDestination(proximity)
             );
             this.returnSearch(context, result);
           },
