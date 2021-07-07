@@ -75,6 +75,7 @@ class _MapPageState extends State<MapPage> {
           myLocationButtonEnabled: false,
           onMapCreated: mapBloc.initMap,
           polylines: mapBloc.state.polylines.values.toSet(),
+          markers: mapBloc.state.markers.values.toSet(),
           onCameraMove: (position) {
             mapBloc.add(OnMapMoved(position.target));
           },
