@@ -51,7 +51,6 @@ class SearchDestination extends SearchDelegate<SearchResult> {
             leading: Icon(Icons.location_on),
             title: Text('set location manually'),
             onTap: () {
-              
               this.close(context, SearchResult(cancelled: false, manual: true));
             },
           )
@@ -85,6 +84,17 @@ class SearchDestination extends SearchDelegate<SearchResult> {
                   leading: Icon(Icons.place),
                   title: Text(currentResult.placeNameEs),
                   subtitle: Text(currentResult.textEs),
+                  onTap: () {
+                    final position = LatLng(currentResult.center[1], currentResult.center[0]);
+                    final searchResult = SearchResult(
+                      position: position,
+                      cancelled: false, 
+                      manual: false,
+                      locationName: currentResult.textEs,
+                      description: currentResult.placeNameEs
+                    );
+                    this.close(context, searchResult);
+                  },
                 );
               },
             );

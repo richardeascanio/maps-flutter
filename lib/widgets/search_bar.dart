@@ -62,7 +62,7 @@ class _BuildSearchBar extends StatelessWidget {
     );
   }
 
-  void returnSearch(BuildContext context, SearchResult result) {
+  Future returnSearch(BuildContext context, SearchResult result) async {
 
     print('cancelled: ${result.cancelled}');
     print('manual: ${result.manual}');
@@ -72,6 +72,35 @@ class _BuildSearchBar extends StatelessWidget {
     if (result.manual) {
       final searchBloc = BlocProvider.of<SearchBloc>(context);
       searchBloc.add(OnActivateManualMarker());
+      return;
     }
+    
+    calculatingAlert(context);
+
+    final _service = TrafficService();
+    final mapBloc = BlocProvider.of<MapaBloc>(context);
+
+    final start = BlocProvider.of<MyLocationBloc>(context).state.location;
+    final dest = result.position;
+
+    final drivingResponse = await _service.getInitialAndFinalCoords(start, dest);
+    final geometry = drivingResponse.routes[0].geometry;
+    final duration = drivingResponse.routes[0].duration;
+    final distance = drivingResponse.routes[0].distance;
+
+    // Decode geometry points
+    final points = Poly.Polyline.Decode(encodedString: geometry, precision: 6).decodedCoords;
+    final List<LatLng> coordList = points.map(
+      (point) => LatLng(point[0], point[1])
+    ).toList();
+
+    mapBloc.add(OnCreateRouteInitDestination(
+      coordRoutes: coordList, 
+      distance: distance, 
+      duration: duration)
+    );
+
+    Navigator.of(context).pop();
+
   }
 }
