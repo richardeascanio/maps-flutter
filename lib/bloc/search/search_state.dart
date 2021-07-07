@@ -4,15 +4,19 @@ part of 'search_bloc.dart';
 class SearchState {
 
   final bool manualSelection;
+  final List<SearchResult> historial;
 
   SearchState({
-    this.manualSelection = false
-  });
+    this.manualSelection = false,
+    List<SearchResult> historial
+  }): this.historial = (historial == null) ? [] : historial;
 
   SearchState copyWith({
-    bool manualSelection
+    bool manualSelection,
+    List<SearchResult> historial
   }) => SearchState(
-    manualSelection: manualSelection ?? this.manualSelection
+    manualSelection: manualSelection ?? this.manualSelection,
+    historial: historial ?? this.historial
   );
 
 }

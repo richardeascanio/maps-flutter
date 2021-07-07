@@ -11,8 +11,9 @@ class SearchDestination extends SearchDelegate<SearchResult> {
 
   final LatLng proximity;
   final TrafficService _service;
+  final List<SearchResult> historial;
 
-  SearchDestination(this.proximity)
+  SearchDestination(this.proximity, this.historial)
     : this._service = TrafficService();
 
   @override
@@ -53,7 +54,14 @@ class SearchDestination extends SearchDelegate<SearchResult> {
             onTap: () {
               this.close(context, SearchResult(cancelled: false, manual: true));
             },
-          )
+          ),
+          ...this.historial.map((result) => ListTile(
+            title: Text(result.locationName),
+            subtitle: Text(result.description),
+            onTap: () {
+              this.close(context, result);
+            },
+          )).toList()
         ],
       );
     }
