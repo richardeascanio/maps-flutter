@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:maps_app/helpers/helpers.dart';
 import 'package:meta/meta.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -107,14 +108,22 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
     final currentPolylines = state.polylines;
     currentPolylines['my_dest_route'] = this._myDestRoute;
 
+    // Initial icon
+    // final initialIcon = await getAssetImageMarker();
+    final initialIcon = await getInitialMarkerIcon(event.duration.toInt());
+    // final endIcon = await getNetworkImageMarker();
+    final endIcon = await getDestinationMarkerIcon(event.distance, event.destinationName);
+
     // Markers
     final initialMarker = Marker(
-      markerId: MarkerId('begining'),
+      markerId: MarkerId('start'),
       position: event.coordRoutes[0],
+      icon: initialIcon,
       infoWindow: InfoWindow(
         title: 'Start',
         snippet: 'Duration: ${(event.duration/60).floor()} min',
-      )
+      ),
+      anchor: Offset(0, 1)
     );
     double km = event.distance/1000;
     km = (km*100).floorToDouble();
@@ -122,19 +131,21 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
     final endMarker = Marker(
       markerId: MarkerId('end'),
       position: event.coordRoutes[event.coordRoutes.length-1],
+      icon: endIcon,
       infoWindow: InfoWindow(
         title: event.destinationName,
         snippet: 'Distance: $km Km',
-      )
+      ),
+      anchor: Offset(0.1, 0.85)
     );
 
     final markers = {...state.markers};
-    markers['begining'] = initialMarker;
+    markers['start'] = initialMarker;
     markers['end'] = endMarker;
 
     Future.delayed(Duration(milliseconds: 300)).then(
       (value) {
-        _mapController.showMarkerInfoWindow(MarkerId('end'));
+        // _mapController.showMarkerInfoWindow(MarkerId('end'));
       }
     );
 
