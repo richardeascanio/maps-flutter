@@ -23,7 +23,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
       if (exists == 0) {
         final newHistorial = [...state.historial, event.searchResult];
-      yield state.copyWith(historial: newHistorial);
+        yield state.copyWith(historial: newHistorial);
       }
     }
   }

@@ -13,8 +13,9 @@ class OnCreateRouteInitDestination extends MapaEvent {
   final List<LatLng> coordRoutes;
   final double distance;
   final double duration;
+  final String destinationName;
 
-  OnCreateRouteInitDestination({this.coordRoutes, this.distance, this.duration});
+  OnCreateRouteInitDestination(this.destinationName, this.coordRoutes, this.distance, this.duration);
 }
 
 class OnMapMoved extends MapaEvent {

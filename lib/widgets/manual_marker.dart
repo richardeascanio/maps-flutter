@@ -96,6 +96,10 @@ class _BuildManualMarker extends StatelessWidget {
     final beginning = BlocProvider.of<MyLocationBloc>(context).state.location;
     final destination = mapBloc.state.centralLocation;
 
+    // Get destination info
+    final destInfo = await trafficService.getLocationDescription(destination);
+    final placeName = destInfo.features[0].textEs;
+
     final routesResponse = await trafficService.getInitialAndFinalCoords(beginning, destination);
     final geometry = routesResponse.routes[0].geometry;
     final duration = routesResponse.routes[0].duration;
@@ -108,10 +112,11 @@ class _BuildManualMarker extends StatelessWidget {
     ).toList();
 
     mapBloc.add(OnCreateRouteInitDestination(
-      coordRoutes: coordList, 
-      distance: distance, 
-      duration: duration)
-    );
+      placeName,
+      coordList, 
+      distance, 
+      duration
+    ));
 
     Navigator.of(context).pop();
 

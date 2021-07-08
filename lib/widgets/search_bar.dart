@@ -85,6 +85,9 @@ class _BuildSearchBar extends StatelessWidget {
     final start = BlocProvider.of<MyLocationBloc>(context).state.location;
     final dest = result.position;
 
+    // Get destination info
+    final placeName = result.locationName;
+
     final drivingResponse = await _service.getInitialAndFinalCoords(start, dest);
     final geometry = drivingResponse.routes[0].geometry;
     final duration = drivingResponse.routes[0].duration;
@@ -97,9 +100,10 @@ class _BuildSearchBar extends StatelessWidget {
     ).toList();
 
     mapBloc.add(OnCreateRouteInitDestination(
-      coordRoutes: coordList, 
-      distance: distance, 
-      duration: duration
+      placeName,
+      coordList, 
+      distance, 
+      duration
     ));
 
     Navigator.of(context).pop();

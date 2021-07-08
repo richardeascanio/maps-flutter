@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 import 'package:maps_app/helpers/debouncer.dart';
+import 'package:maps_app/models/reverse_query_response.dart';
 import 'package:maps_app/models/routes_response.dart';
 import 'package:maps_app/models/search_response.dart';
 
@@ -45,7 +46,6 @@ class TrafficService {
   }
 
   Future<SearchResponse> getSearchResults(String query, LatLng proximity) async {
-    print('buscando...');
     final endpoint = '/geocoding/v5/mapbox.places/$query.json';
 
     try {
@@ -67,6 +67,21 @@ class TrafficService {
       return SearchResponse(features: []);
     }
     
+  }
+
+  Future<ReverseQueryResponse> getLocationDescription(LatLng location) async {
+    final endpoint = '/geocoding/v5/mapbox.places/${location.longitude},${location.latitude}.json';
+
+    final url = Uri.https(_baseUrl, endpoint, {
+      'access_token': this._apiKey,
+      'language': 'es',
+    });
+
+    final response = await http.get(url);
+    final jsonData = response.body;
+
+    final reverseQueryResponse = ReverseQueryResponse.fromJson(jsonData);
+    return reverseQueryResponse;
   }
 
   void getSuggestionsByQuery(String query, LatLng proximity) {

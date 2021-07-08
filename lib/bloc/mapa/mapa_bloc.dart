@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show Colors;
+import 'package:flutter/material.dart' show Colors, Offset;
 
 import 'dart:async';
 import 'dart:convert';
@@ -110,16 +110,33 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
     // Markers
     final initialMarker = Marker(
       markerId: MarkerId('begining'),
-      position: event.coordRoutes[0]
+      position: event.coordRoutes[0],
+      infoWindow: InfoWindow(
+        title: 'Start',
+        snippet: 'Duration: ${(event.duration/60).floor()} min',
+      )
     );
+    double km = event.distance/1000;
+    km = (km*100).floorToDouble();
+    km = km/100;
     final endMarker = Marker(
       markerId: MarkerId('end'),
-      position: event.coordRoutes[event.coordRoutes.length-1]
+      position: event.coordRoutes[event.coordRoutes.length-1],
+      infoWindow: InfoWindow(
+        title: event.destinationName,
+        snippet: 'Distance: $km Km',
+      )
     );
 
     final markers = {...state.markers};
     markers['begining'] = initialMarker;
     markers['end'] = endMarker;
+
+    Future.delayed(Duration(milliseconds: 300)).then(
+      (value) {
+        _mapController.showMarkerInfoWindow(MarkerId('end'));
+      }
+    );
 
     yield state.copyWith(
       polylines: currentPolylines,
